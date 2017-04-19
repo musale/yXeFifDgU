@@ -1,0 +1,10 @@
+Django
+gunicorn
+djangorestframework
+djangorestframework-jwt
+Pillow
+psycopg2
+PyJWT
+python-dateutil
+django-dotenv
+django-pipeline
