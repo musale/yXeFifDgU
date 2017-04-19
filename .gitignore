@@ -1,0 +1,6 @@
+*.pyc
+*.swp
+.venv
+.env
+*/migrations/*
+!*/migrations/__init__.py
