@@ -25,6 +25,11 @@ def getDebug():
         return False
 
 
+RAVEN_DNS = "%s:%s@sentry.io/%s" % (get_env_variable('RAVEN_CODE_ONE'),
+                                    get_env_variable('RAVEN_CODE_TWO'),
+                                    get_env_variable('RAVEN_PORT'))
+
+
 # Database settings
 DB = {
     'name': get_env_variable('LOYALTY_DB_NAME'),
@@ -46,4 +51,12 @@ DJANGO = {
     "static_root": "/apps/loyalty/static/",
     "media_url": "/media/",
     "media_root": "/apps/loyalty/media/",
+}
+
+# Email settings
+EMAIL = {
+    'email': 'jambo@dukaconnect.com',
+    'password': get_env_variable('EMAIL_PASSWORD'),
+    'host': 'smtp.gmail.com', 'port': 587,
+    'default': 'DUKAConnect <jambo@dukaconnect.com>'
 }

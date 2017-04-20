@@ -10,17 +10,17 @@ user_dev = "vagrant"
 user_live = "focus"
 
 
-def loyaldev():
+def local():
     """Local loyalty project host."""
     env.hosts = ["loyaltydev"]
 
 
-def loyalprod():
+def production():
     """Production loyalty project host."""
     env.hosts = ["duka"]
 
 
-def up():
+def sync():
     """Sync local files with development host."""
     rsync_project(
         "{}project".format(app_dir),
