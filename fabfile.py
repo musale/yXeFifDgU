@@ -39,6 +39,7 @@ def manage_app():
     run("/opt/venvs/loyalty/bin/python manage.py makemigrations")
     run("/opt/venvs/loyalty/bin/python manage.py migrate")
     run("/opt/venvs/loyalty/bin/python manage.py collectstatic --noinput")
+    run("/opt/venvs/loyalty/bin/python manage.py test --noinput")
 
 
 def restart_app():

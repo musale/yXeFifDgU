@@ -1,11 +1,18 @@
-Django
-gunicorn
-djangorestframework
-djangorestframework-jwt
-Pillow
-psycopg2
-PyJWT
-python-dateutil
-django-dotenv
-django-pipeline
-raven
+Django==1.11
+django-dotenv==1.4.1
+django-pipeline==1.6.12
+djangorestframework==3.6.2
+djangorestframework-jwt==1.10.0
+gunicorn==19.7.1
+olefile==0.44
+packaging==16.8
+Pillow==4.1.0
+psycopg2==2.7.1
+PyJWT==1.4.2
+pyparsing==2.2.0
+python-dateutil==2.6.0
+pytz==2017.2
+raven==6.0.0
+six==1.10.0
+# markdown==2.6.6
+# django-filter

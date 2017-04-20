@@ -1,6 +1,7 @@
 """Django settings for loyalty project."""
 
 import os
+import sys
 
 # import raven
 from utils.config import DB, DJANGO, EMAIL, RAVEN_DNS
@@ -27,6 +28,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
+    'rest_framework',
+    'loyalty.apps.account',
+    'loyalty.apps.administrator',
+    'loyalty.apps.apiv1',
+    'loyalty.apps.customer',
+    'loyalty.apps.point',
+    'loyalty.apps.purchase',
+    'loyalty.apps.shopkeeper',
+    'loyalty.apps.sms',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +50,17 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'loyalty.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
 
 TEMPLATES = [
     {
@@ -71,7 +92,11 @@ DATABASES = {
         'PORT': DB['port'],
     }
 }
-
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase'
+    }
 
 # Sentry
 RAVEN_CONFIG = {
@@ -166,6 +191,46 @@ LOGGING = {
     },
     'loggers': {
         'django': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'account': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'administrator': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'apiv1': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'customer': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'point': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'purchase': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'shopkeeper': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'sms': {
             'handlers': ['file', 'mail_admins', 'sentry', 'console'],
             'propagate': True,
             'level': 'INFO',
