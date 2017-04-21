@@ -4,7 +4,7 @@ import os
 import sys
 
 # import raven
-from utils.config import DB, DJANGO, EMAIL, RAVEN_DNS
+from utils.config import AFT_API, DB, DJANGO, EMAIL, RAVEN_DNS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'loyalty.apps.account',
     'loyalty.apps.administrator',
     'loyalty.apps.apiv1',
+    'loyalty.apps.billing',
     'loyalty.apps.customer',
     'loyalty.apps.point',
     'loyalty.apps.purchase',
@@ -216,6 +217,11 @@ LOGGING = {
             'propagate': True,
             'level': 'INFO',
         },
+        'billing': {
+            'handlers': ['file', 'mail_admins', 'sentry', 'console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
         'customer': {
             'handlers': ['file', 'mail_admins', 'sentry', 'console'],
             'propagate': True,
@@ -301,3 +307,8 @@ PIPELINE = {
         }
     }
 }
+
+# Africa's Talking credentials
+AFRICAS_TALKING_API_KEY = AFT_API['key']
+AFRICAS_TALKING_USERNAME = AFT_API['user']
+SENDER_ID = AFT_API['senderid']

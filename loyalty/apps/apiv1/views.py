@@ -70,7 +70,7 @@ def save_new_shopkeeper(data):
     user.userprofile.phonenumber = phonenumber
     user.userprofile.gender = gender
     user.userprofile.date_of_birth = datetime.datetime.strptime(
-        date_of_birth, "%d-%m-%Y")
+        date_of_birth, "%Y-%m-%d")
     # set shopkeeper as not active, not staff and not superuser
     user.is_active = False
     user.is_staff = False

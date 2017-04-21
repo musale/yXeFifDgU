@@ -5,13 +5,11 @@ import datetime
 import json
 from logging import getLogger
 
-from django.contrib.auth.models import User
-# from rest_framework import status
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from loyalty.apps.apiv1.views import SignUpApiView
+from utils.testing_utils import get_test_userprofile
 
-# TODO: test SignUpApiView
 logger = getLogger(__name__)
 
 
@@ -23,26 +21,16 @@ class SignUpApiViewTest(APITestCase):
         self.factory = APIRequestFactory()
         self.view = SignUpApiView.as_view()
         self.date_of_birth = datetime.datetime.strptime(
-            "05-01-2017", "%d-%m-%Y")
-        self.shopkeeper = User.objects.create(
-            username="testuser2", first_name="admin", last_name="tester",
-            email="testeremail@tests.com")
-        self.shopkeeper.set_password("wecantest$tuff")
-        self.shopkeeper.userprofile.user = self.shopkeeper
-        self.shopkeeper.userprofile.user_type = "SHOPKEEPER"
-        self.shopkeeper.userprofile.phonenumber = "0705881881"
-        self.shopkeeper.userprofile.activation_key = "ACKY01"
-        self.shopkeeper.userprofile.gender = "MALE"
-        self.shopkeeper.userprofile.date_of_birth = self.date_of_birth
-        self.shopkeeper.save()
+            "1993-01-05", "%Y-%m-%d")
+        self.shopkeeper = get_test_userprofile(2, "SHOPKEEPER")
         self.payload_shopkeeper = {
             "first_name": "John", "last_name": "Doe", "username": "testuser",
             "user_type": "SHOPKEEPER", "phonenumber": "0705867162",
-            "gender": "MALE", "date_of_birth":  "05-01-1993"}
+            "gender": "MALE", "date_of_birth":  "1993-01-05"}
         self.payload_customer = {
             "first_name": "John", "last_name": "Doe", "user_type": "CUSTOMER",
             "phonenumber": "0705867162", "gender": "MALE",
-            "date_of_birth":  "05-01-1993",
+            "date_of_birth":   "1993-01-05",
             "shopkeeper_id": self.shopkeeper.id}
 
     def test_account_signup_endpoint(self):

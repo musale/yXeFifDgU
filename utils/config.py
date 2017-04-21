@@ -18,25 +18,25 @@ def get_env_variable(var_name):
 def getDebug():
     """Get the DEBUG value."""
     if get_env_variable(
-        'DUKA_ENV') == 'production' or get_env_variable(
-            'DUKA_ENV') == 'development':
+        "DUKA_ENV") == "production" or get_env_variable(
+            "DUKA_ENV") == "development":
         return True
     else:
         return False
 
 
-RAVEN_DNS = "%s:%s@sentry.io/%s" % (get_env_variable('RAVEN_CODE_ONE'),
-                                    get_env_variable('RAVEN_CODE_TWO'),
-                                    get_env_variable('RAVEN_PORT'))
+RAVEN_DNS = "%s:%s@sentry.io/%s" % (get_env_variable("RAVEN_CODE_ONE"),
+                                    get_env_variable("RAVEN_CODE_TWO"),
+                                    get_env_variable("RAVEN_PORT"))
 
 
 # Database settings
 DB = {
-    'name': get_env_variable('LOYALTY_DB_NAME'),
-    'host': get_env_variable('LOYALTY_DB_HOST'),
-    'user': get_env_variable('LOYALTY_DB_USER'),
-    'password': get_env_variable('LOYALTY_DB_PASSWORD'),
-    'port': get_env_variable('LOYALTY_DB_PORT'),
+    "name": get_env_variable("LOYALTY_DB_NAME"),
+    "host": get_env_variable("LOYALTY_DB_HOST"),
+    "user": get_env_variable("LOYALTY_DB_USER"),
+    "password": get_env_variable("LOYALTY_DB_PASSWORD"),
+    "port": get_env_variable("LOYALTY_DB_PORT"),
 }
 
 
@@ -55,8 +55,40 @@ DJANGO = {
 
 # Email settings
 EMAIL = {
-    'email': 'jambo@dukaconnect.com',
-    'password': get_env_variable('EMAIL_PASSWORD'),
-    'host': 'smtp.gmail.com', 'port': 587,
-    'default': 'DUKAConnect <jambo@dukaconnect.com>'
+    "email": "jambo@dukaconnect.com",
+    "password": get_env_variable("EMAIL_PASSWORD"),
+    "host": "smtp.gmail.com", "port": 587,
+    "default": "DUKAConnect <jambo@dukaconnect.com>"
+}
+
+
+def getAftApiCredentials():
+    """Get the AfricasTalking api credentials for local and live."""
+    if getDebug():
+        # local
+        return {
+            "user": get_env_variable("AT_API_USER"),
+            "key": get_env_variable("AT_API_KEY_STAGE"),
+            "senderid": "50012"
+        }
+    else:
+        # production settings
+        return {
+            "user": get_env_variable("AT_API_USER"),
+            "key": get_env_variable("AT_API_KEY_PROD"),
+            "senderid": get_env_variable("SENDER_ID")
+        }
+
+
+AFT_API = getAftApiCredentials()
+
+VERIFY = "Hi %s, welcome to DukaConnect. Use %s to verify your account."
+
+VERIFY_RESET_PASSWORD = "Hi %s, use %s to verify your password reset request."
+
+SMS_UTILS = {
+    "default_cost": 5.0,
+    "character_count": 160,
+    "verify_account_text": VERIFY,
+    "verify_reset_password": VERIFY_RESET_PASSWORD
 }
