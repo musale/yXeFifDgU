@@ -28,8 +28,8 @@ class UserProfileTest(TestCase):
         self.user.userprofile.date_of_birth = self.date_of_birth
         self.user.save()
         self.customer = Customer.objects.create(
-            owner=self.user.userprofile, firstname="customer",
-            lastname="testname", phonenumber="0711727272"
+            owner=self.user.userprofile, first_name="customer",
+            last_name="testname", phonenumber="0711727272"
         )
 
     def test_user_is_created(self):

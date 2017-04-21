@@ -12,6 +12,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from loyalty.apps.account.models import Customer
 from utils.utilities import generate_code
 
 logger = getLogger(__name__)
@@ -27,30 +28,29 @@ class SignUpApiView(APIView):
         """Handle POST account/signup/ ."""
         data = request.data
         user_type = data.get("user_type" or None)
+        # generate new code and expiry date for the shopkeeper
+        code, day = generate_code()
         if user_type == "SHOPKEEPER":
             user = save_new_shopkeeper(data)
-            # generate new code and expiry date for the shopkeeper
-            code, day = generate_code()
+            # save shopkeeper
+            user.userprofile.user_type = user_type
             # save the code and expiry date
             user.userprofile.activation_key = code
             user.userprofile.key_expiry_date = day
-
             user.save()
-
-            # send the user an SMS with the code
-            # TODO: Add send sms code
-            return Response(
-                status=status.HTTP_201_CREATED,
-                data={"data": data})
         elif user_type == "CUSTOMER":
-            # TODO: save a customer
-            return Response(
-                status=status.HTTP_202_ACCEPTED,
-                data={"data": data})
-        else:
-            return Response(
-                status=status.HTTP_202_ACCEPTED,
-                data={"data": data})
+            # save a customer
+            customer = save_new_customer(data)
+            if customer:
+                customer.activation_key = code
+                customer.key_expiry_date = day
+                customer.save()
+
+        # send the user an SMS with the code
+        # TODO: Add send sms code
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={"data": data})
 
 
 def save_new_shopkeeper(data):
@@ -58,7 +58,6 @@ def save_new_shopkeeper(data):
     username = data.get("username" or None)
     first_name = data.get("first_name" or None)
     last_name = data.get("last_name" or None)
-    user_type = data.get("user_type" or None)
     password = data.get("password" or None)
     phonenumber = data.get("phonenumber" or None)
     gender = data.get("gender" or None)
@@ -68,7 +67,6 @@ def save_new_shopkeeper(data):
         username=username, first_name=first_name, last_name=last_name)
     user.set_password(password)
     user.userprofile.user = user
-    user.userprofile.user_type = user_type
     user.userprofile.phonenumber = phonenumber
     user.userprofile.gender = gender
     user.userprofile.date_of_birth = datetime.datetime.strptime(
@@ -79,3 +77,28 @@ def save_new_shopkeeper(data):
     user.is_superuser = False
     user.save()
     return user
+
+
+def save_new_customer(data):
+    """Save a new Customer object."""
+    shopkeeper_id = data.get("shopkeeper_id" or None)
+    first_name = data.get("first_name" or None)
+    last_name = data.get("last_name" or None)
+    phonenumber = data.get("phonenumber" or None)
+    gender = data.get("gender" or None)
+    date_of_birth = data.get("date_of_birth" or None)
+    try:
+        shopkeeper = User.objects.get(id=shopkeeper_id)
+        customer = Customer.objects.create(
+            owner=shopkeeper.userprofile,
+            first_name=first_name,
+            last_name=last_name,
+            phonenumber=phonenumber,
+            gender=gender,
+            date_of_birth=date_of_birth,
+        )
+        return customer
+    except Exception as e:
+        logger.exception("SHOPKEEPER NOT FOUND: {}".format(str(e)))
+        logger.error("SHOPKEEPER NOT FOUND: {}".format(str(e)))
+        return None
