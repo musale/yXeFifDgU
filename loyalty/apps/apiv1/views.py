@@ -1,6 +1,7 @@
 """API version 1 for dukaconnect loyalty."""
 from __future__ import unicode_literals
 
+import datetime
 # from django.http import Http404
 from logging import getLogger
 
@@ -24,7 +25,7 @@ class SignUpApiView(APIView):
 
     def post(self, request, format=None):
         """Handle POST account/signup/ ."""
-        data = request.POST
+        data = request.data
         user_type = data.get("user_type" or None)
         if user_type == "SHOPKEEPER":
             user = save_new_shopkeeper(data)
@@ -38,11 +39,18 @@ class SignUpApiView(APIView):
 
             # send the user an SMS with the code
             # TODO: Add send sms code
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(
+                status=status.HTTP_201_CREATED,
+                data={"data": data})
         elif user_type == "CUSTOMER":
             # TODO: save a customer
-            pass
-            return Response(status=status.HTTP_202_ACCEPTED)
+            return Response(
+                status=status.HTTP_202_ACCEPTED,
+                data={"data": data})
+        else:
+            return Response(
+                status=status.HTTP_202_ACCEPTED,
+                data={"data": data})
 
 
 def save_new_shopkeeper(data):
@@ -63,9 +71,11 @@ def save_new_shopkeeper(data):
     user.userprofile.user_type = user_type
     user.userprofile.phonenumber = phonenumber
     user.userprofile.gender = gender
-    user.userprofile.date_of_birth = date_of_birth
+    user.userprofile.date_of_birth = datetime.datetime.strptime(
+        date_of_birth, "%d-%m-%Y")
     # set shopkeeper as not active, not staff and not superuser
     user.is_active = False
     user.is_staff = False
     user.is_superuser = False
-    return user.save()
+    user.save()
+    return user

@@ -1,6 +1,8 @@
 """Unit tests for account app."""
 from __future__ import unicode_literals
 
+import datetime
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 
@@ -12,6 +14,8 @@ class UserProfileTest(TestCase):
 
     def setUp(self):
         """Set up a user."""
+        self.date_of_birth = datetime.datetime.strptime(
+            "05-01-2017", "%d-%m-%Y")
         self.user = User.objects.create(
             username="testuser", first_name="admin", last_name="tester",
             email="testeremail@tests.com")
@@ -21,6 +25,7 @@ class UserProfileTest(TestCase):
         self.user.userprofile.phonenumber = "0705881881"
         self.user.userprofile.activation_key = "ACKY01"
         self.user.userprofile.gender = "MALE"
+        self.user.userprofile.date_of_birth = self.date_of_birth
         self.user.save()
         self.customer = Customer.objects.create(
             owner=self.user.userprofile, firstname="customer",

@@ -14,5 +14,6 @@ python-dateutil==2.6.0
 pytz==2017.2
 raven==6.0.0
 six==1.10.0
-# markdown==2.6.6
-# django-filter
+markdown==2.6.6
+django-filter
+coreapi

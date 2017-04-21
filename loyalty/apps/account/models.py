@@ -39,7 +39,7 @@ class UserProfile(models.Model):
     gender = models.CharField(
         max_length=10, choices=GENDERS, default=GENDERS[0][0], null=True,
         blank=True)
-    date_of_birth = models.DateTimeField(default=now)
+    date_of_birth = models.DateField(blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
