@@ -8,7 +8,8 @@ from logging import getLogger
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from loyalty.apps.apiv1.views import (SignUpCustomerApiView,
-                                      SignUpShopkeeperApiView)
+                                      SignUpShopkeeperApiView,
+                                      VerifyCustomerApiView)
 from utils.testing_utils import get_test_userprofile
 
 logger = getLogger(__name__)
@@ -76,3 +77,41 @@ class SignUpApiViewTest(APITestCase):
             content_type='application/json')
         response = self.customer_view(request)
         self.assertEqual(response.data.get("data"), self.payload_customer)
+
+
+class VerifyCustomerApiViewTest(APITestCase):
+    """Test VerifyCustomerApiView."""
+
+    def setUp(self):
+        """Setup default vars."""
+        self.url = "/v1/accounts/verify/shopkeepers/"
+        self.user = get_test_userprofile(8, "SHOPKEEPER")
+        self.payload = {
+            "userCode": self.user.userprofile.activation_key,
+            "userType": "SHOPKEEPER"
+        }
+        self.view = VerifyCustomerApiView.as_view()
+
+    def test_accounts_verify_shopkeeper_endpoint(self):
+        """Test the endpoint /v1/accounts/verify/shopkeepers/ exists."""
+        self.test_get = self.client.get(self.url)
+        self.test_post = self.client.post(
+            self.url, self.payload, format="json")
+        self.assertEqual(405, self.test_get.status_code)
+        self.assertEqual(202, self.test_post.status_code)
+
+    def test_wrong_verify_code(self):
+        """Test the userCode provided DOES NOT exists."""
+        payload = {
+            "userCode": "WRONGC0DE",
+            "userType": "SHOPKEEPER"
+        }
+        self.test_post = self.client.post(self.url, payload, format="json")
+        self.assertEqual(404, self.test_post.status_code)
+
+    def test_right_verify_code(self):
+        """Test the userCode provided exists."""
+        self.test_post = self.client.post(
+            self.url, self.payload, format="json")
+        self.assertEqual(
+            self.test_post.data["userCode"], self.payload["userCode"])

@@ -6,22 +6,25 @@ import datetime
 from logging import getLogger
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from loyalty.apps.account.models import Customer
+from loyalty.apps.account.models import Customer, UserProfile
+from loyalty.apps.account.serializers import UserProfileSerializer
 from loyalty.settings import production as setting
-from utils.send_sms import send_out_message
+from rest_framework_jwt.settings import api_settings
+from utils.send_sms import (VERIFICATION_SMS, WELCOME_CUSTOMER_SMS,
+                            send_out_message)
 from utils.utilities import generate_code
 
 logger = getLogger(__name__)
-VERIFICATION_SMS = (
-    "Hello {0}, welcome to DukaConnect loyalty service."
-    "Use the code {1} to verify your registration"
-)
+NOW = timezone.now()
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 @permission_classes((AllowAny, ))
@@ -72,14 +75,42 @@ class SignUpCustomerApiView(APIView):
                 customer.activation_key = self.code
                 customer.key_expiry_date = self.day
                 customer.save()
-                # send the user an SMS with the code
-                message = VERIFICATION_SMS.format(
-                    customer.get_full_name(), self.code)
+                # send welcome sms to shopkeepers
+                message = WELCOME_CUSTOMER_SMS.format(customer.get_full_name())
                 send_out_message([phonenumber], message, setting.SENDER_ID)
-
         return Response(
             status=status.HTTP_201_CREATED,
             data={"data": data})
+
+
+@permission_classes((AllowAny, ))
+class VerifyCustomerApiView(APIView):
+    """Verify a customer given an activation_key."""
+
+    http_method_names = ['post']
+
+    def post(self, request, format=None):
+        """Handle POST accounts/verify/shopkeepers ."""
+        data = request.data
+        user_type = data.get("userType" or None)
+        code = data.get("userCode" or None)
+        if user_type == "SHOPKEEPER":
+            try:
+                shopkeeper = UserProfile.objects.get(activation_key=code)
+                return verify_shopkeeper(shopkeeper)
+            except Exception as e:
+                logger.error(
+                    "SHOPKEEPER WITH CODE {} DOES NOT EXIST".format(code))
+                logger.exception(
+                    "ERROR GETTING SHOPKEEPER: {}".format(str(e)))
+                return Response(status=status.HTTP_404_NOT_FOUND, data={
+                    "error": True,
+                    "message": (
+                        "Shopkeeper with code {}"
+                        " does not exist.".format(code)
+                    ),
+                    "userCode": code
+                })
 
 
 def save_new_shopkeeper(data):
@@ -131,3 +162,33 @@ def save_new_customer(data):
         logger.exception("SHOPKEEPER NOT FOUND: {}".format(str(e)))
         logger.error("SHOPKEEPER NOT FOUND: {}".format(str(e)))
         return None
+
+
+def verify_shopkeeper(shopkeeper):
+    """Verify a shopkeeper fetched with a given code."""
+    serializer = UserProfileSerializer(shopkeeper.user.userprofile)
+    userCode = shopkeeper.activation_key
+    if shopkeeper.key_expiry_date < NOW:
+        return Response(status=status.HTTP_401_UNAUTHORIZED, data={
+            "error": True,
+            "message": (
+                "The code {} has expired. Generate a new one to verify".format(
+                    userCode)
+            ),
+            "userCode": userCode
+        })
+    else:
+        shopkeeper.user.is_active = True
+        shopkeeper.save()
+        payload = jwt_payload_handler(shopkeeper.user)
+        token = jwt_encode_handler(payload)
+        data = {
+            "token": token,
+            "userData": serializer.data,
+            "error": False,
+            "message": (
+                "Login success. {} welcome to DukaConnect.".format(
+                    shopkeeper.user.get_full_name())
+            ),
+            "userCode": userCode}
+        return Response(status=status.HTTP_202_ACCEPTED, data=data)

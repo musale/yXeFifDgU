@@ -36,6 +36,8 @@ def get_test_userprofile(id, user_type):
     user.userprofile.user_type = user_type
     user.userprofile.phonenumber = "0705881881"
     user.userprofile.activation_key = "ACKY01"
+    user.userprofile.key_expiry_date = NOW + timezone.timedelta(
+        days=settings.KEY_EXPIRY_DAYS)
     user.userprofile.gender = "MALE"
     user.userprofile.date_of_birth = date_of_birth
     user.save()

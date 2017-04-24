@@ -8,6 +8,15 @@ from loyalty.settings import production as setting
 from utils import utilities
 from utils.AfricasTalkingGateway import AfricasTalkingGateway
 
+VERIFICATION_SMS = (
+    "Hello {0}, welcome to DukaConnect loyalty service."
+    "Use the code {1} to verify your registration"
+)
+
+WELCOME_CUSTOMER_SMS = (
+    "Hello {0}, welcome to DukaConnect loyalty service."
+)
+
 
 class SendUserSMS(object):
     """SendUserSMS."""
