@@ -3,6 +3,7 @@ import datetime
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from loyalty.apps.sms import models as sms
 from loyalty.settings import production as settings
@@ -16,10 +17,10 @@ TEST_MESSAGE = (
     " content here', making it look like readable English."
 )
 
-TEST_NUMBERS = "0705867162, 0722210115, 0712391091"
+TEST_NUMBERS = "+254705867162,+254722210115,+254712391091"
 TEST_NUMBERS_LIST = ["0705867162", "0722210115", "0712391091"]
 
-NOW = datetime.datetime.now()
+NOW = timezone.now()
 
 
 def get_test_userprofile(id, user_type):

@@ -1,9 +1,8 @@
 """Test sms app."""
 from __future__ import unicode_literals
 
-import datetime
-
 from django.test import TestCase
+from django.utils import timezone
 
 from loyalty.apps.sms import models as sms
 from utils import testing_utils as test_with
@@ -49,7 +48,7 @@ class DlrStatusTest(TestCase):
         """Set up an SMSOutbox, SMSRecipient and DlrStatus objects."""
         self.sender = test_with.get_test_userprofile(6, "SHOPKEEPER")
         self.smsoutbox = test_with.get_test_smsoutbox(self.sender)
-        self.now = datetime.datetime.now()
+        self.now = timezone.now()
         self.recipients = []
 
     def test_smsoutbox_is_created(self):

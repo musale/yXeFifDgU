@@ -19,31 +19,58 @@ logger = getLogger(__name__)
 
 
 @permission_classes((AllowAny, ))
-class SignUpApiView(APIView):
-    """Sign up a shopkeeper or a customer."""
+class SignUpShopkeeperApiView(APIView):
+    """Sign up a shopkeeper."""
 
     http_method_names = ['post']
+    # generate new code and expiry date for the shopkeeper
+    code, day = generate_code()
 
     def post(self, request, format=None):
         """Handle POST account/signup/ ."""
         data = request.data
         user_type = data.get("user_type" or None)
-        # generate new code and expiry date for the shopkeeper
-        code, day = generate_code()
+
         if user_type == "SHOPKEEPER":
             user = save_new_shopkeeper(data)
             # save shopkeeper
             user.userprofile.user_type = user_type
             # save the code and expiry date
-            user.userprofile.activation_key = code
-            user.userprofile.key_expiry_date = day
+            user.userprofile.activation_key = self.code
+            user.userprofile.key_expiry_date = self.day
             user.save()
-        elif user_type == "CUSTOMER":
+        # elif user_type == "CUSTOMER":
+        #     # save a customer
+        #     customer = save_new_customer(data)
+        #     if customer:
+        #         customer.activation_key = code
+        #         customer.key_expiry_date = day
+        #         customer.save()
+
+        # send the user an SMS with the code
+        # TODO: Add send sms code
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={"data": data})
+
+
+@permission_classes((AllowAny, ))
+class SignUpCustomerApiView(APIView):
+    """Sign up a shopkeeper or a customer."""
+
+    http_method_names = ['post']
+    code, day = generate_code()
+
+    def post(self, request, format=None):
+        """Handle POST account/signup/ ."""
+        data = request.data
+        user_type = data.get("user_type" or None)
+        if user_type == "CUSTOMER":
             # save a customer
             customer = save_new_customer(data)
             if customer:
-                customer.activation_key = code
-                customer.key_expiry_date = day
+                customer.activation_key = self.code
+                customer.key_expiry_date = self.day
                 customer.save()
 
         # send the user an SMS with the code
