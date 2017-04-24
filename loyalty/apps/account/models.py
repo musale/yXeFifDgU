@@ -88,3 +88,7 @@ class Customer(models.Model):
         """Meta data class."""
 
         ordering = ['-id']
+
+    def get_full_name(self):
+        """Get customer full name."""
+        return "{0} {1}".format(self.first_name, self.last_name)

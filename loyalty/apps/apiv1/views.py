@@ -13,9 +13,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from loyalty.apps.account.models import Customer
+from loyalty.settings import production as setting
+from utils.send_sms import send_out_message
 from utils.utilities import generate_code
 
 logger = getLogger(__name__)
+VERIFICATION_SMS = (
+    "Hello {0}, welcome to DukaConnect loyalty service."
+    "Use the code {1} to verify your registration"
+)
 
 
 @permission_classes((AllowAny, ))
@@ -30,7 +36,7 @@ class SignUpShopkeeperApiView(APIView):
         """Handle POST account/signup/ ."""
         data = request.data
         user_type = data.get("user_type" or None)
-
+        phonenumber = data.get("phonenumber" or None)
         if user_type == "SHOPKEEPER":
             user = save_new_shopkeeper(data)
             # save shopkeeper
@@ -39,16 +45,9 @@ class SignUpShopkeeperApiView(APIView):
             user.userprofile.activation_key = self.code
             user.userprofile.key_expiry_date = self.day
             user.save()
-        # elif user_type == "CUSTOMER":
-        #     # save a customer
-        #     customer = save_new_customer(data)
-        #     if customer:
-        #         customer.activation_key = code
-        #         customer.key_expiry_date = day
-        #         customer.save()
-
-        # send the user an SMS with the code
-        # TODO: Add send sms code
+            message = VERIFICATION_SMS.format(user.get_full_name(), self.code)
+            send_out_message(
+                [phonenumber], message, setting.SENDER_ID, sender=user)
         return Response(
             status=status.HTTP_201_CREATED,
             data={"data": data})
@@ -65,6 +64,7 @@ class SignUpCustomerApiView(APIView):
         """Handle POST account/signup/ ."""
         data = request.data
         user_type = data.get("user_type" or None)
+        phonenumber = data.get("phonenumber" or None)
         if user_type == "CUSTOMER":
             # save a customer
             customer = save_new_customer(data)
@@ -72,9 +72,11 @@ class SignUpCustomerApiView(APIView):
                 customer.activation_key = self.code
                 customer.key_expiry_date = self.day
                 customer.save()
+                # send the user an SMS with the code
+                message = VERIFICATION_SMS.format(
+                    customer.get_full_name(), self.code)
+                send_out_message([phonenumber], message, setting.SENDER_ID)
 
-        # send the user an SMS with the code
-        # TODO: Add send sms code
         return Response(
             status=status.HTTP_201_CREATED,
             data={"data": data})
