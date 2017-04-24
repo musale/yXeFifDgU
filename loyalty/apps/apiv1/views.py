@@ -53,7 +53,9 @@ class SignUpShopkeeperApiView(APIView):
                 [phonenumber], message, setting.SENDER_ID, sender=user)
         return Response(
             status=status.HTTP_201_CREATED,
-            data={"data": data})
+            data={
+                "data": data, "error": False,
+                "message": "Shopkeeper has been created"})
 
 
 @permission_classes((AllowAny, ))
@@ -80,7 +82,10 @@ class SignUpCustomerApiView(APIView):
                 send_out_message([phonenumber], message, setting.SENDER_ID)
         return Response(
             status=status.HTTP_201_CREATED,
-            data={"data": data})
+            # TODO: seriliaze customer object
+            data={
+                "data": data,
+                "error": False, "message": "Customer has been created."})
 
 
 @permission_classes((AllowAny, ))
