@@ -121,8 +121,8 @@ class SignUpCustomerApiView(APIView):
 
 
 @permission_classes((AllowAny, ))
-class VerifyCustomerApiView(APIView):
-    """Verify a customer given an activation_key."""
+class VerifyShopkeeperApiView(APIView):
+    """Verify a shopkeeper given an activation_key."""
 
     http_method_names = ['post']
 

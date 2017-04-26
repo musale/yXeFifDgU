@@ -9,7 +9,7 @@ from rest_framework.test import APIRequestFactory, APITestCase
 
 from loyalty.apps.apiv1.views import (SignUpCustomerApiView,
                                       SignUpShopkeeperApiView,
-                                      VerifyCustomerApiView)
+                                      VerifyShopkeeperApiView)
 from utils.testing_utils import get_test_userprofile
 
 logger = getLogger(__name__)
@@ -79,7 +79,7 @@ class SignUpApiViewTest(APITestCase):
         self.assertEqual(response.data.get("data"), self.payload_customer)
 
 
-class VerifyCustomerApiViewTest(APITestCase):
+class VerifyShopkeeperApiViewTest(APITestCase):
     """Test VerifyCustomerApiView."""
 
     def setUp(self):
@@ -90,7 +90,7 @@ class VerifyCustomerApiViewTest(APITestCase):
             "userCode": self.user.userprofile.activation_key,
             "userType": "SHOPKEEPER"
         }
-        self.view = VerifyCustomerApiView.as_view()
+        self.view = VerifyShopkeeperApiView.as_view()
 
     def test_accounts_verify_shopkeeper_endpoint(self):
         """Test the endpoint /v1/accounts/verify/shopkeepers/ exists."""

@@ -77,6 +77,8 @@
         </ul>
       </div>
     </div>
+    <!-- END SHOPKEEPER SIGN UP API -->
+  <hr>
     <!-- 2. CUSTOMER SIGN UP -->
     <div class="card">
       <div class="card-block">
@@ -149,6 +151,70 @@
             headers = {'content-type': 'application/json'}
             url = 'https://test.dukaconnect.com/v1/accounts/signup/customers/'
             data = {"first_name": "John", "last_name": "Doe", "username": "testuser", "user_type": "SHOPKEEPER", "phonenumber": "0705867162", "gender": "MALE", "date_of_birth":  "1993-01-05", "shopkeeper_id": 1}
+            requests.post(url, data=json.dumps(data), headers=headers)
+            </code></pre>
+        </ul>
+      </div>
+    </div>
+    <!-- END CUSTOMER SIGN UP API -->
+  <hr>
+    <!-- 3. VERIFY SHOPKEEPER SIGN UP API -->
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">Verify a shopkeeper</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Verify the code the shopkeepers will be sent after sign up.</h6>
+        <ul>
+          <li>URL</li>
+            <code>/v1/accounts/verify/shopkeepers/</code>
+          <li>Method</li>
+            <code>POST</code>
+          <li>URL Params</li>
+            <code>None</code>
+          <li>Data Params</li>
+            <code>userCode=[string]</code><br>
+            <code>userType=[string]</code>
+          <li>Success Response</li>
+            <ul>
+              <li>Status Code:
+                <code>202 ACCEPTED</code>
+              </li>
+              <li>Content: <pre>{
+                "token": "oiakjkds0kajsdkj0qw0190490101jkkkajkjkl;k'",
+                "userData": {
+                  "username": "testuser",
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "email": "tester@gmail.com",
+                  "user_type": SHOPKEEPER,
+                  "phonenumber": "0791212302",
+                  "avatar": "https:dukaconnect.com/media/avatars/testeruser/logo.png",
+                  "gender": "MALE",
+                  "date_joined": "26 April 2017"
+                },
+                "error": False,
+                "message":   "Login success. John Doe welcome to DukaConnect.",
+                "userCode": "userC0D3"
+              </pre>
+              </li>
+            </ul>
+          <li>Error Response</li>
+            <ul>
+              <li>Status Code:
+                <code>401 UNAUTHORIZED</code>
+              </li>
+              <li>Content:<pre><code>{
+                "error": True,
+                "message": "The code userC0D3 has expired. Generate a new one to verify",
+                "userCode": "userC0D3"
+                }</code></pre>
+              </li>
+            </ul>
+          <li>Sample call</li><pre><code>
+            import requests
+            import json
+            headers = {'content-type': 'application/json'}
+            url = 'https://test.dukaconnect.com/v1/accounts/signup/customers/'
+            data = {"userType": "SHOPKEEPER", "userCode": "userC0D3"}
             requests.post(url, data=json.dumps(data), headers=headers)
             </code></pre>
         </ul>

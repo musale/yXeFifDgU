@@ -2,7 +2,7 @@
 from django.conf.urls import url
 
 from .views import (ApiDocumentationView, SignUpCustomerApiView,
-                    SignUpShopkeeperApiView, VerifyCustomerApiView)
+                    SignUpShopkeeperApiView, VerifyShopkeeperApiView)
 
 urlpatterns = [
     url(r'^$',
@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^accounts/signup/customers/$',
         SignUpCustomerApiView.as_view(), name="accounts_signup_customers"),
     url(r'^accounts/verify/shopkeepers/$',
-        VerifyCustomerApiView.as_view(), name="accounts_verify_shopkeepers"),
+        VerifyShopkeeperApiView.as_view(), name="accounts_verify_shopkeepers"),
 ]
