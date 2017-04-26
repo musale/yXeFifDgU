@@ -53,7 +53,7 @@ class SignUpApiViewTest(APITestCase):
         self.test_get = self.client.get("/v1/accounts/signup/customers/")
         self.test_post = self.client.post(
             "/v1/accounts/signup/customers/",
-            self.payload_shopkeeper, format="json")
+            self.payload_customer, format="json")
         # status_code=405 means Method is not allowed
         self.assertEqual(405, self.test_get.status_code)
         # status_code=200 means OK

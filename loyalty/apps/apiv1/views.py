@@ -61,20 +61,21 @@ class SignUpShopkeeperApiView(APIView):
                 user.userprofile.activation_key = self.code
                 user.userprofile.key_expiry_date = self.day
                 user.save()
-                message = VERIFICATION_SMS.format(user.get_full_name(), self.code)
+                message = VERIFICATION_SMS.format(
+                    user.get_full_name(), self.code)
                 send_out_message(
                     [phonenumber], message, setting.SENDER_ID, sender=user)
+                return Response(
+                    status=status.HTTP_201_CREATED,
+                    data={
+                        "data": data, "error": False,
+                        "message": "Shopkeeper has been created"})
             else:
                 return Response(
                     status=status.HTTP_409_CONFLICT,
                     data={
                         "data": data, "error": True,
                         "message": "Shopkeeper has already been created"})
-        return Response(
-            status=status.HTTP_201_CREATED,
-            data={
-                "data": data, "error": False,
-                "message": "Shopkeeper has been created"})
 
 
 @permission_classes((AllowAny, ))
@@ -89,6 +90,7 @@ class SignUpCustomerApiView(APIView):
         data = request.data
         user_type = data.get("user_type" or None)
         phonenumber = data.get("phonenumber" or None)
+        shopkeeperId = data.get("shopkeeper_id" or None)
         if user_type == "CUSTOMER":
             # save a customer
             customer = save_new_customer(data)
@@ -99,12 +101,23 @@ class SignUpCustomerApiView(APIView):
                 # send welcome sms to shopkeepers
                 message = WELCOME_CUSTOMER_SMS.format(customer.get_full_name())
                 send_out_message([phonenumber], message, setting.SENDER_ID)
-        return Response(
-            status=status.HTTP_201_CREATED,
-            # TODO: seriliaze customer object
-            data={
-                "data": data,
-                "error": False, "message": "Customer has been created."})
+                return Response(
+                    status=status.HTTP_201_CREATED,
+                    # TODO: seriliaze customer object
+                    data={
+                        "data": data,
+                        "error": False,
+                        "message": "Customer has been created."})
+            else:
+                return Response(
+                    status=status.HTTP_404_NOT_FOUND,
+                    data={
+                        "data": data,
+                        "error": False,
+                        "message": (
+                            "Shopkeeper with id {} does"
+                            " not exist.".format(shopkeeperId)
+                        )})
 
 
 @permission_classes((AllowAny, ))

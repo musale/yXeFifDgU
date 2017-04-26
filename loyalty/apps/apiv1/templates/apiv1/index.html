@@ -20,64 +20,141 @@
           <li>URL Params</li>
           <code>None</code>
           <li>Data Params</li>
-          <pre>
-            <code>first_name=[string]</code>
-            <code>last_name=[string]</code>
-            <code>username=[string]</code>
-            <code>user_type=[string]</code>
-            <code>phonenumber=[string]</code>
-            <code>gender=[string]</code>
-            <code>date_of_birth=[string]</code>
+          <pre>first_name=[string]<br>last_name=[string]<br>username=[string]<br>user_type=[string]<br>phonenumber=[string]<br>gender=[string]<br>date_of_birth=[string]
           </pre>
           <li>Success Response</li>
-          <ul>
-            <li>Status Code:
-              <code>201 CREATED</code>
-            </li>
-            <li>Content: <pre><code>{
-              "first_name": "John",
-              "last_name": "Doe",
-              "username": "testuser",
-              "user_type": "SHOPKEEPER",
-              "phonenumber": "0705867162",
-              "gender": "MALE",
-              "date_of_birth": "1993-01-05",
-              "error": False,
-              "message": "Shopkeeper has been created"
-            }</code></pre>
-            </li>
-          </ul>
-        <li>Error Response</li>
-        <ul>
-          <li>Status Code:
-            <code>409 CONFLICT</code>
-          </li>
-          <li>Content:<pre><code>
-            {
-              "first_name": "John",
-              "last_name": "Doe",
-              "username": "testuser",
-              "user_type": "SHOPKEEPER",
-              "phonenumber": "0705867162",
-              "gender": "MALE",
-              "date_of_birth": "1993-01-05",
-              "error": True,
-              "message": "Shopkeeper has already been created"
-            }</code></pre>
-          </li>
+            <ul>
+              <li>Status Code:
+                <code>201 CREATED</code>
+              </li>
+              <li>Content: <pre>
+                {
+                  "data": {
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "username": "testuser",
+                    "user_type": "SHOPKEEPER",
+                    "phonenumber": "0705867162",
+                    "gender": "MALE",
+                    "date_of_birth": "1993-01-05",
+                  },
+                  "error": False,
+                  "message": "Shopkeeper has been created"
+                }
+            </pre>
+              </li>
+            </ul>
+          <li>Error Response</li>
+            <ul>
+              <li>Status Code:
+                <code>409 CONFLICT</code>
+              </li>
+              <li>Content:<pre><code>
+                {
+                  "data": {
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "username": "testuser",
+                    "user_type": "SHOPKEEPER",
+                    "phonenumber": "0705867162",
+                    "gender": "MALE",
+                    "date_of_birth": "1993-01-05",
+                  },
+                  "error": True,
+                  "message": "Shopkeeper has already been created"
+                }</code></pre>
+              </li>
+            </ul>
+          <li>Sample call</li><pre><code>
+              import requests
+              import json
+              headers = {'content-type': 'application/json'}
+              url = 'https://test.dukaconnect.com/v1/accounts/signup/shopkeepers/'
+              data = {"first_name": "John", "last_name": "Doe", "username": "testuser", "user_type": "SHOPKEEPER", "phonenumber": "0705867162", "gender": "MALE", "date_of_birth":  "1993-01-05"}
+              requests.post(url, data=json.dumps(data), headers=headers)
+            </code>
+          </pre>
         </ul>
-        <li>Sample call</li><pre><code>
+      </div>
+    </div>
+    <!-- 2. CUSTOMER SIGN UP -->
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">Sign up a customer</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Signs up a customer into the platform and returns a JSON of their details. This is done by a shopkeeper.</h6>
+        <ul>
+          <li>URL</li>
+            <code>/v1/accounts/signup/customers/</code>
+          <li>Method</li>
+            <code>POST</code>
+          <li>URL Params</li>
+            <code>None</code>
+          <li>Data Params</li>
+            <pre>
+              <code>first_name=[string]</code>
+              <code>last_name=[string]</code>
+              <code>username=[string]</code>
+              <code>user_type=[string]</code>
+              <code>phonenumber=[string]</code>
+              <code>gender=[string]</code>
+              <code>date_of_birth=[string]</code>
+              <code>shopkeeper_id=[integer]</code>
+            </pre>
+          <li>Success Response</li>
+            <ul>
+              <li>Status Code:
+                <code>201 CREATED</code>
+              </li>
+              <li>Content: <pre><code>{
+                "data" : {
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "username": "testuser",
+                  "user_type": "CUSTOMER",
+                  "phonenumber": "0705867162",
+                  "gender": "MALE",
+                  "date_of_birth": "1993-01-05",
+                  "shopkeeper_id": 1,
+                },
+                "error": False,
+                "message": "Customer has been created."
+              }</code></pre>
+              </li>
+            </ul>
+          <li>Error Response</li>
+            <ul>
+              <li>Status Code:
+                <code>404 NOT FOUND</code>
+              </li>
+              <li>Content:<pre><code>
+                {
+                  "data" : {
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "username": "testuser",
+                    "user_type": "CUSTOMER",
+                    "phonenumber": "0705867162",
+                    "gender": "MALE",
+                    "date_of_birth": "1993-01-05",
+                    "shopkeeper_id": 1,
+                  },
+                  "error": True,
+                  "message": "Shopkeeper with id 1 does not exist."
+                }</code></pre>
+              </li>
+            </ul>
+          <li>Sample call</li><pre><code>
             import requests
             import json
             headers = {'content-type': 'application/json'}
-            url = 'https://test.dukaconnect.com/v1/accounts/signup/shopkeepers/'
-            data = {"first_name": "John", "last_name": "Doe", "username": "testuser", "user_type": "SHOPKEEPER", "phonenumber": "0705867162", "gender": "MALE", "date_of_birth":  "1993-01-05"}
+            url = 'https://test.dukaconnect.com/v1/accounts/signup/customers/'
+            data = {"first_name": "John", "last_name": "Doe", "username": "testuser", "user_type": "SHOPKEEPER", "phonenumber": "0705867162", "gender": "MALE", "date_of_birth":  "1993-01-05", "shopkeeper_id": 1}
             requests.post(url, data=json.dumps(data), headers=headers)
-          </code>
-        </pre>
-    </ul>
+            </code></pre>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
 <!-- END SHOPKEEPER SIGNUP API -->
 {% endblock %}
 
