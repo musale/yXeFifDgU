@@ -38,7 +38,10 @@ def manage_app():
     sudo("/opt/venvs/loyalty/bin/pip install -r requirements.txt")
     run("/opt/venvs/loyalty/bin/python manage.py makemigrations")
     run("/opt/venvs/loyalty/bin/python manage.py migrate")
-    run("/opt/venvs/loyalty/bin/python manage.py collectstatic --noinput")
+    run((
+        "/opt/venvs/loyalty/bin/python manage.py"
+        " collectstatic --noinput --clear"
+    ))
     run("/opt/venvs/loyalty/bin/python manage.py test --noinput")
 
 

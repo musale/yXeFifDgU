@@ -7,6 +7,7 @@ from logging import getLogger
 
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
@@ -27,6 +28,17 @@ jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
+class ApiDocumentationView(TemplateView):
+    """ApiDocumentationView."""
+
+    template_name = "apiv1/index.html"
+
+    def get_context_data(self, **kwargs):
+        """Get the context data."""
+        context = super(ApiDocumentationView, self).get_context_data(**kwargs)
+        return context
+
+
 @permission_classes((AllowAny, ))
 class SignUpShopkeeperApiView(APIView):
     """Sign up a shopkeeper."""
@@ -42,15 +54,22 @@ class SignUpShopkeeperApiView(APIView):
         phonenumber = data.get("phonenumber" or None)
         if user_type == "SHOPKEEPER":
             user = save_new_shopkeeper(data)
-            # save shopkeeper
-            user.userprofile.user_type = user_type
-            # save the code and expiry date
-            user.userprofile.activation_key = self.code
-            user.userprofile.key_expiry_date = self.day
-            user.save()
-            message = VERIFICATION_SMS.format(user.get_full_name(), self.code)
-            send_out_message(
-                [phonenumber], message, setting.SENDER_ID, sender=user)
+            if user:
+                # save shopkeeper
+                user.userprofile.user_type = user_type
+                # save the code and expiry date
+                user.userprofile.activation_key = self.code
+                user.userprofile.key_expiry_date = self.day
+                user.save()
+                message = VERIFICATION_SMS.format(user.get_full_name(), self.code)
+                send_out_message(
+                    [phonenumber], message, setting.SENDER_ID, sender=user)
+            else:
+                return Response(
+                    status=status.HTTP_409_CONFLICT,
+                    data={
+                        "data": data, "error": True,
+                        "message": "Shopkeeper has already been created"})
         return Response(
             status=status.HTTP_201_CREATED,
             data={
@@ -128,19 +147,24 @@ def save_new_shopkeeper(data):
     gender = data.get("gender" or None)
     date_of_birth = data.get("date_of_birth" or None)
     # TODO: get avatar
-    user = User.objects.create(
-        username=username, first_name=first_name, last_name=last_name)
-    user.set_password(password)
-    user.userprofile.user = user
-    user.userprofile.phonenumber = phonenumber
-    user.userprofile.gender = gender
-    user.userprofile.date_of_birth = datetime.datetime.strptime(
-        date_of_birth, "%Y-%m-%d")
-    # set shopkeeper as not active, not staff and not superuser
-    user.is_active = False
-    user.is_staff = False
-    user.is_superuser = False
-    user.save()
+    try:
+        user = User.objects.create(
+            username=username, first_name=first_name, last_name=last_name)
+        user.set_password(password)
+        user.userprofile.user = user
+        user.userprofile.phonenumber = phonenumber
+        user.userprofile.gender = gender
+        user.userprofile.date_of_birth = datetime.datetime.strptime(
+            date_of_birth, "%Y-%m-%d")
+        # set shopkeeper as not active, not staff and not superuser
+        user.is_active = False
+        user.is_staff = False
+        user.is_superuser = False
+        user.save()
+    except Exception as e:
+        logger.exception(
+            "EXCEPTION RAISED DURING SHOPKEEPER REG: {}".format(str(e)))
+        return None
     return user
 
 

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-5">Duka Connect Loyalty Points API Documentation</h1>
+      <p class="lead">This is version 1 of the DukaConnect Loyalty Points API</p>
+    </div>
+  </div>
+  <div class="container">
+    <!-- 1. SHOPKEEPER SIGNUP API -->
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">Sign up a shopkeeper</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Signs up a shopkeeper into the platform and returns a JSON of their details.</h6>
+        <ul>
+          <li>URL</li>
+          <code>/v1/accounts/signup/shopkeepers/</code>
+          <li>Method</li>
+          <code>POST</code>
+          <li>URL Params</li>
+          <code>None</code>
+          <li>Data Params</li>
+          <pre>
+            <code>first_name=[string]</code>
+            <code>last_name=[string]</code>
+            <code>username=[string]</code>
+            <code>user_type=[string]</code>
+            <code>phonenumber=[string]</code>
+            <code>gender=[string]</code>
+            <code>date_of_birth=[string]</code>
+          </pre>
+          <li>Success Response</li>
+          <ul>
+            <li>Status Code:
+              <code>201 CREATED</code>
+            </li>
+            <li>Content: <pre><code>{
+              "first_name": "John",
+              "last_name": "Doe",
+              "username": "testuser",
+              "user_type": "SHOPKEEPER",
+              "phonenumber": "0705867162",
+              "gender": "MALE",
+              "date_of_birth": "1993-01-05",
+              "error": False,
+              "message": "Shopkeeper has been created"
+            }</code></pre>
+            </li>
+          </ul>
+        <li>Error Response</li>
+        <ul>
+          <li>Status Code:
+            <code>409 CONFLICT</code>
+          </li>
+          <li>Content:<pre><code>
+            {
+              "first_name": "John",
+              "last_name": "Doe",
+              "username": "testuser",
+              "user_type": "SHOPKEEPER",
+              "phonenumber": "0705867162",
+              "gender": "MALE",
+              "date_of_birth": "1993-01-05",
+              "error": True,
+              "message": "Shopkeeper has already been created"
+            }</code></pre>
+          </li>
+        </ul>
+        <li>Sample call</li><pre><code>
+            import requests
+            import json
+            headers = {'content-type': 'application/json'}
+            url = 'https://test.dukaconnect.com/v1/accounts/signup/shopkeepers/'
+            data = {"first_name": "John", "last_name": "Doe", "username": "testuser", "user_type": "SHOPKEEPER", "phonenumber": "0705867162", "gender": "MALE", "date_of_birth":  "1993-01-05"}
+            requests.post(url, data=json.dumps(data), headers=headers)
+          </code>
+        </pre>
+    </ul>
+  </div>
+</div>
+<!-- END SHOPKEEPER SIGNUP API -->
+{% endblock %}
+
+<!-- SAMPLE API CARD -->
+<!-- <div class="card">
+  <div class="card-block">
+    <h4 class="card-title">API NAME</h4>
+    <h6 class="card-subtitle mb-2 text-muted">API details</h6>
+    <ul>
+      <li>URL</li>
+      <p>SOme stuff</p>
+      <li>Methog</li>
+      <p>Some stuff</p>
+      <li>URL Params</li>
+      <p>Some stuff</p>
+      <li>Data Params</li>
+      <p>Some stuff</p>
+      <li>Success Response</li>
+      <p>Some stuff</p>
+      <li>Error Response</li>
+      <p>Some stuff</p>
+    </ul>
+  </div>
+</div> -->
+<!-- END SAMPLE API CARD -->

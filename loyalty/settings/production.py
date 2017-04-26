@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
+    'pipeline',
     'rest_framework',
     'loyalty.apps.account',
     'loyalty.apps.administrator',
@@ -72,7 +73,7 @@ REST_FRAMEWORK = {
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -284,26 +285,26 @@ MEDIA_ROOT = DJANGO['media_root']
 PIPELINE = {
     'PIPELINE_ENABLED': True,
     'CSS_COMPRESSOR': 'pipeline.compressors.yuglify.YuglifyCompressor',
-    # 'JS_COMPRESSOR': 'pipeline.compressors.NoopCompressor',
     'JS_COMPRESSOR': 'pipeline.compressors.yuglify.YuglifyCompressor',
     'YUGLIFY_BINARY': '/usr/lib/node_modules/yuglify/bin/yuglify',
     'STYLESHEETS': {
-        'maincss': {
+        'customcss': {
             'source_filenames': (
-                'css/base.css',
+                'css/main.css',
             ),
-            'output_filename': 'css/main.css',
+            'output_filename': 'css/custom.min.css',
             'extra_context': {
                 'media': 'screen,projection',
             },
         }
     },
     'JAVASCRIPT': {
-        'mainjs': {
+        'customjs': {
             'source_filenames': (
+                'js/bootstrap.min.js',
                 'js/main.js',
             ),
-            'output_filename': 'js/main.js',
+            'output_filename': 'js/custom.min.js',
         }
     }
 }
