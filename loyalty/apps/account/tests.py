@@ -22,7 +22,8 @@ class UserProfileTest(TestCase):
         self.user = get_test_userprofile(1, "SHOPKEEPER")
         self.customer = Customer.objects.create(
             owner=self.user.userprofile, first_name="customer",
-            last_name="testname", phonenumber="0711727272"
+            last_name="testname", phonenumber="0711727272",
+            loyalty_account="DK-BHY001"
         )
 
     def test_user_is_created(self):

@@ -95,10 +95,7 @@ class SignUpCustomerApiView(APIView):
             # save a customer
             customer = save_new_customer(data)
             if customer:
-                customer.activation_key = self.code
-                customer.key_expiry_date = self.day
-                customer.save()
-                # send welcome sms to shopkeepers
+                # send welcome sms to customer
                 message = WELCOME_CUSTOMER_SMS.format(customer.get_full_name())
                 send_out_message([phonenumber], message, setting.SENDER_ID)
                 return Response(
@@ -189,8 +186,10 @@ def save_new_customer(data):
     phonenumber = data.get("phonenumber" or None)
     gender = data.get("gender" or None)
     date_of_birth = data.get("date_of_birth" or None)
+    code, _ = generate_code()
     try:
         shopkeeper = User.objects.get(id=shopkeeper_id)
+        # TODO: Try, Catch instance code is duplicate
         customer = Customer.objects.create(
             owner=shopkeeper.userprofile,
             first_name=first_name,
@@ -198,6 +197,7 @@ def save_new_customer(data):
             phonenumber=phonenumber,
             gender=gender,
             date_of_birth=date_of_birth,
+            loyalty_account="DK-".format(code)
         )
         return customer
     except Exception as e:

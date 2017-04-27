@@ -75,8 +75,8 @@ class Customer(models.Model):
     gender = models.CharField(
         max_length=10, choices=GENDERS, default=GENDERS[0][0], null=True,
         blank=True)
-    activation_key = models.CharField(max_length=40, null=True, blank=True)
-    key_expiry_date = models.DateTimeField(null=True, default=now)
+    loyalty_account = models.CharField(
+        max_length=40, null=True, blank=True, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
