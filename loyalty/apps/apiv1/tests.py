@@ -125,8 +125,19 @@ class JWTResponsePayloadHandlerTest(TestCase):
     def setUp(self):
         """Set up."""
         self.user = get_test_userprofile(11, "SHOPKEEPER")
+        self.url = "/v1/accounts/login/"
+        self.payload = {
+            "username": self.user.username,
+            "password": "wecantest$tuff"
+        }
 
     def test_jwt_response_payload_handler(self):
         """Test jwt_response_payload_handler."""
         self.response = jwt_response_payload_handler(user=self.user)
         self.assertEqual(self.response["error"], False)
+
+    def test_login(self):
+        """Test a shopkeeper login."""
+        self.test_post = self.client.post(
+            self.url, self.payload, format="json")
+        self.assertEqual(200, self.test_post.status_code)
