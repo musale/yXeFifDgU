@@ -29,5 +29,5 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         model = models.UserProfile
         fields = (
             "username", "first_name", "last_name", "email", "user_type",
-            "phonenumber", "avatar",  "gender", "date_joined")
+            "phonenumber", "avatar",  "gender", "date_joined", "pk")
         depth = 1

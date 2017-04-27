@@ -82,7 +82,8 @@ class Customer(models.Model):
 
     def __str__(self):
         """Object return string."""
-        return "{2}:{0} {1}".format(self.firstname, self.lastname, self.gender)
+        return "{2}:{0} {1}".format(
+            self.first_name, self.last_name, self.gender)
 
     class Meta:
         """Meta data class."""

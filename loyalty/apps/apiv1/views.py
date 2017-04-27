@@ -8,7 +8,7 @@ from logging import getLogger
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views.generic import TemplateView
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 from loyalty.apps.account.models import Customer, UserProfile
 from loyalty.apps.account.serializers import UserProfileSerializer
+from loyalty.apps.customer.serializers import CustomerModelSerializer
 from loyalty.settings import production as setting
 from rest_framework_jwt.settings import api_settings
 from utils.send_sms import (VERIFICATION_SMS, WELCOME_CUSTOMER_SMS,
@@ -156,6 +157,71 @@ class ShopkeeperLogoutView(APIView):
         """Simply delete the token to force a login."""
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class AllCustomersListView(generics.ListAPIView):
+    """View all the registered customers."""
+
+    serializer_class = CustomerModelSerializer
+    model = serializer_class.Meta.model
+    queryset = serializer_class.Meta.model.objects.all()
+    paginate_by = 100
+
+
+class CustomerDetailView(generics.RetrieveUpdateAPIView):
+    """View a customer given a pk value."""
+
+    serializer_class = CustomerModelSerializer
+    model = serializer_class.Meta.model
+    queryset = serializer_class.Meta.model.objects.all()
+
+
+class AllShopKeepersListView(generics.ListAPIView):
+    """View all the registered shopkeepers."""
+
+    serializer_class = UserProfileSerializer
+    model = serializer_class.Meta.model
+    queryset = serializer_class.Meta.model.objects.all()
+    paginate_by = 100
+
+    def get_queryset(self, **kwargs):
+        """Return only shopkeepers."""
+        return self.queryset.filter(user_type="SHOPKEEPER")
+
+
+class ShopKeeperDetailView(generics.RetrieveUpdateAPIView):
+    """View a ShopKeeper."""
+
+    serializer_class = UserProfileSerializer
+    model = serializer_class.Meta.model
+    queryset = serializer_class.Meta.model.objects.all()
+
+
+class AllCustomersForAShopkeeperListView(generics.ListAPIView):
+    """View all the customers for a single shopkeeper."""
+
+    serializer_class = CustomerModelSerializer
+    model = serializer_class.Meta.model
+    queryset = serializer_class.Meta.model.objects.all()
+    paginate_by = 100
+
+    def get_queryset(self, **kwargs):
+        """Return only shopkeepers."""
+        owner_pk = self.kwargs["pk"]
+        return self.queryset.filter(owner__pk=owner_pk)
+
+
+class CustomerForAShopkeeperDetailView(generics.RetrieveUpdateAPIView):
+    """View single customer for a single shopkeeper."""
+
+    serializer_class = CustomerModelSerializer
+    model = serializer_class.Meta.model
+    queryset = serializer_class.Meta.model.objects.all()
+
+    def get_queryset(self, **kwargs):
+        """Return only shopkeepers."""
+        owner_pk = self.kwargs["shopkeeper_pk"]
+        return self.queryset.filter(owner__pk=owner_pk)
 
 
 def save_new_shopkeeper(data):

@@ -1,6 +1,15 @@
-# -*- coding: utf-8 -*-
+"""Customers admin."""
 from __future__ import unicode_literals
 
 from django.contrib import admin
 
-# Register your models here.
+from loyalty.apps.account import models
+
+
+class CustomerModelAdmin(admin.ModelAdmin):
+    """Customer admin class."""
+
+    pass
+
+
+admin.site.register(models.Customer, CustomerModelAdmin)

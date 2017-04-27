@@ -141,3 +141,30 @@ class JWTResponsePayloadHandlerTest(TestCase):
         self.test_post = self.client.post(
             self.url, self.payload, format="json")
         self.assertEqual(200, self.test_post.status_code)
+
+
+class AllCustomersListViewTest(APITestCase):
+    """Test the AllCustomersListView."""
+
+    def setUp(self):
+        """Warm the engine."""
+        self.url = "/api/v1/customers/"
+        self.user = get_test_userprofile(12, "SHOPKEEPER")
+        self.customer_url = "/api/v1/customers/{}/".format(
+            self.user.userprofile.pk
+        )
+
+    def _require_login(self):
+        self.client.login(
+            username=self.user.username, password="wecantest$tuff")
+
+    def test_all_customers_endpoint(self):
+        """Test the endpoint /api/v1/customers exists."""
+        self.test_get = self.client.get(self.url)
+        # No authentication was given so 403 returned
+        self.assertEqual(403, self.test_get.status_code)
+
+    def test_single_customer_endpoint(self):
+        """Test the endpoint /api/v1/customers/:pk/ ."""
+        self.test_get = self.client.get(self.customer_url)
+        self.assertEqual(403, self.test_get.status_code)
