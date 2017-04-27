@@ -1,4 +1,4 @@
-"""Test the api endpoints on /v1/ ."""
+"""Test the api endpoints on /api/v1/ ."""
 from __future__ import unicode_literals
 
 import datetime
@@ -39,10 +39,10 @@ class SignUpApiViewTest(APITestCase):
             "shopkeeper_id": self.shopkeeper.id}
 
     def test_accounts_signup_shopkeeper_endpoint(self):
-        """Test the endpoint GET /v1/accounts/signup/shopkeepers/ ."""
-        self.test_get = self.client.get("/v1/accounts/signup/shopkeepers/")
+        """Test the endpoint GET /api/v1/accounts/signup/shopkeepers/ ."""
+        self.test_get = self.client.get("/api/v1/accounts/signup/shopkeepers/")
         self.test_post = self.client.post(
-            "/v1/accounts/signup/shopkeepers/",
+            "/api/v1/accounts/signup/shopkeepers/",
             self.payload_shopkeeper, format="json")
         # status_code=405 means Method is not allowed
         self.assertEqual(405, self.test_get.status_code)
@@ -51,10 +51,10 @@ class SignUpApiViewTest(APITestCase):
             201, self.test_post.status_code)
 
     def test_accounts_signup_customer_endpoint(self):
-        """Test the endpoint GET /v1/accounts/signup/customers/ ."""
-        self.test_get = self.client.get("/v1/accounts/signup/customers/")
+        """Test the endpoint GET /api/v1/accounts/signup/customers/ ."""
+        self.test_get = self.client.get("/api/v1/accounts/signup/customers/")
         self.test_post = self.client.post(
-            "/v1/accounts/signup/customers/",
+            "/api/v1/accounts/signup/customers/",
             self.payload_customer, format="json")
         # status_code=405 means Method is not allowed
         self.assertEqual(405, self.test_get.status_code)
@@ -65,7 +65,7 @@ class SignUpApiViewTest(APITestCase):
     def test_signingup_shopkeeper(self):
         """Test signing up a shopkeeper."""
         request = self.factory.post(
-            "/v1/accounts/signup/shopkeepers/",
+            "/api/v1/accounts/signup/shopkeepers/",
             json.dumps(self.payload_shopkeeper),
             content_type='application/json')
         response = self.shopkeeper_view(request)
@@ -74,7 +74,7 @@ class SignUpApiViewTest(APITestCase):
     def test_signingup_customer(self):
         """Test signing up a customer."""
         request = self.factory.post(
-            "/v1/accounts/signup/customers/",
+            "/api/v1/accounts/signup/customers/",
             json.dumps(self.payload_customer),
             content_type='application/json')
         response = self.customer_view(request)
@@ -86,7 +86,7 @@ class VerifyShopkeeperApiViewTest(APITestCase):
 
     def setUp(self):
         """Setup default vars."""
-        self.url = "/v1/accounts/verify/shopkeepers/"
+        self.url = "/api/v1/accounts/verify/shopkeepers/"
         self.user = get_test_userprofile(8, "SHOPKEEPER")
         self.payload = {
             "userCode": self.user.userprofile.activation_key,
@@ -95,7 +95,7 @@ class VerifyShopkeeperApiViewTest(APITestCase):
         self.view = VerifyShopkeeperApiView.as_view()
 
     def test_accounts_verify_shopkeeper_endpoint(self):
-        """Test the endpoint /v1/accounts/verify/shopkeepers/ exists."""
+        """Test the endpoint /api/v1/accounts/verify/shopkeepers/ exists."""
         self.test_get = self.client.get(self.url)
         self.test_post = self.client.post(
             self.url, self.payload, format="json")
@@ -125,7 +125,7 @@ class JWTResponsePayloadHandlerTest(TestCase):
     def setUp(self):
         """Set up."""
         self.user = get_test_userprofile(11, "SHOPKEEPER")
-        self.url = "/v1/accounts/login/"
+        self.url = "/api/v1/accounts/login/"
         self.payload = {
             "username": self.user.username,
             "password": "wecantest$tuff"

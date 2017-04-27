@@ -147,6 +147,17 @@ class VerifyShopkeeperApiView(APIView):
                 })
 
 
+class ShopkeeperLogoutView(APIView):
+    """Logout a shopkeeper and expire their tokens."""
+
+    queryset = User.objects.all()
+
+    def get(self, request, format=None):
+        """Simply delete the token to force a login."""
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
 def save_new_shopkeeper(data):
     """Save a new shopkeeper."""
     username = data.get("username" or None)
