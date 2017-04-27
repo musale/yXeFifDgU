@@ -208,7 +208,6 @@ def save_new_customer(data):
 
 def verify_shopkeeper(shopkeeper):
     """Verify a shopkeeper fetched with a given code."""
-    serializer = UserProfileSerializer(shopkeeper.user.userprofile)
     userCode = shopkeeper.activation_key
     if shopkeeper.key_expiry_date < NOW:
         return Response(status=status.HTTP_401_UNAUTHORIZED, data={
@@ -222,15 +221,24 @@ def verify_shopkeeper(shopkeeper):
     else:
         shopkeeper.user.is_active = True
         shopkeeper.save()
-        payload = jwt_payload_handler(shopkeeper.user)
-        token = jwt_encode_handler(payload)
-        data = {
-            "token": token,
-            "userData": serializer.data,
-            "error": False,
-            "message": (
-                "Login success. {} welcome to DukaConnect.".format(
-                    shopkeeper.user.get_full_name())
-            ),
-            "userCode": userCode}
+        data = jwt_response_payload_handler(user=shopkeeper.user)
         return Response(status=status.HTTP_202_ACCEPTED, data=data)
+
+
+def jwt_response_payload_handler(token=None, user=None, request=None):
+    """Override of jwt_response_payload_handler to have custom response."""
+    serializer = UserProfileSerializer(user.userprofile)
+    userCode = user.userprofile.activation_key
+    payload = jwt_payload_handler(user)
+    token = jwt_encode_handler(payload)
+    data = {
+        "token": token,
+        "userData": serializer.data,
+        "error": False,
+        "message": (
+            "Login success. {} welcome to DukaConnect.".format(
+                user.get_full_name())
+        ),
+        "userCode": userCode}
+
+    return data

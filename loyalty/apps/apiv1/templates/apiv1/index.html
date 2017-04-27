@@ -194,6 +194,7 @@
                 "error": False,
                 "message":   "Login success. John Doe welcome to DukaConnect.",
                 "userCode": "userC0D3"
+              }
               </pre>
               </li>
             </ul>
@@ -220,6 +221,66 @@
         </ul>
       </div>
     </div>
+  <hr>
+    <!-- 4. SHOPKEEPER LOGIN -->
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">Login a shopkeeper</h4>
+        <h6 class="card-subtitle mb-2 text-muted">Allow a shopkeeper access into the platform.</h6>
+        <ul>
+          <li>URL</li>
+            <code>/v1/accounts/login/</code>
+          <li>Method</li>
+            <code>POST</code>
+          <li>URL Params</li>
+            <code>None</code>
+          <li>Data Params</li>
+            <code>username=[string]</code><br>
+            <code>password=[string]</code>
+          <li>Success Response</li>
+            <ul>
+              <li>Status Code:
+                <code>200 OK</code>
+              </li>
+              <li>Content: <pre>{
+	"userData": {
+		"username": "admin",
+		"first_name": "Martin",
+		"last_name": "Musale",
+		"email": "",
+		"user_type": "ADMIN",
+		"phonenumber": "",
+		"avatar": "/media/avatars/default-avatar.png",
+		"gender": "MALE",
+		"date_joined": "2017-04-27T07:34:30.152695Z"
+	},
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwidXNlcl9pZCI6MywiZW1haWwiOiIiLCJleHAiOjE0OTMyNzkxNDF9.PhqJxnQbyQRPGNnc3XCT9V2dC5utjnbJXB5PA9Ecgcg",
+	"message": "Login success. Martin Musale welcome to DukaConnect.",
+	"userCode": null,
+	"error": false
+}
+              </pre>
+              </li>
+            </ul>
+          <li>Error Response</li>
+            <ul>
+              <li>Status Code:
+                <code>401 UNAUTHORIZED</code>
+              </li>
+              <li>Content:<pre>
+                {
+	"non_field_errors": ["Unable to log in with provided credentials."]
+}
+              </pre>
+              </li>
+            </ul>
+          <li>Sample call</li><pre>
+            curl -X POST -H "Content-Type: application/json" -d '{"username":"admin","password":"admin001"}' http://dev.loyalty.com/v1/accounts/login/
+          </pre>
+        </ul>
+      </div>
+    </div>
+    <!-- END SHOPKEEPER LOGIN -->
   </div>
 <!-- END SHOPKEEPER SIGNUP API -->
 {% endblock %}

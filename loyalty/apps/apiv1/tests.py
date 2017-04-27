@@ -5,11 +5,13 @@ import datetime
 import json
 from logging import getLogger
 
+from django.test import TestCase
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from loyalty.apps.apiv1.views import (SignUpCustomerApiView,
                                       SignUpShopkeeperApiView,
-                                      VerifyShopkeeperApiView)
+                                      VerifyShopkeeperApiView,
+                                      jwt_response_payload_handler)
 from utils.testing_utils import get_test_userprofile
 
 logger = getLogger(__name__)
@@ -115,3 +117,16 @@ class VerifyShopkeeperApiViewTest(APITestCase):
             self.url, self.payload, format="json")
         self.assertEqual(
             self.test_post.data["userCode"], self.payload["userCode"])
+
+
+class JWTResponsePayloadHandlerTest(TestCase):
+    """Test JWT_RESPONSE_PAYLOAD_HANDLER function."""
+
+    def setUp(self):
+        """Set up."""
+        self.user = get_test_userprofile(11, "SHOPKEEPER")
+
+    def test_jwt_response_payload_handler(self):
+        """Test jwt_response_payload_handler."""
+        self.response = jwt_response_payload_handler(user=self.user)
+        self.assertEqual(self.response["error"], False)
